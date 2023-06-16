@@ -83,8 +83,7 @@ conda activate autoavsr
 
 ## Logging
 
-For logging training process, we use [wandb](https://wandb.ai/). To customize the yaml file, match the file name with the team name in your account, e.g. [cassini.yaml](conf/logger/cassini.yaml). Then, change the `logger` argument in [conf/config.yaml](conf
-/config.yaml). Lastly, Don't forget to specify the `project` argument in [conf/logger/cassini.yaml](conf/logger/cassini.yaml). If you do not use wandb, please append `log_wandb=False` in the command.
+For logging training process, we use [wandb](https://wandb.ai/). To customize the yaml file, match the file name with the team name in your account, e.g. [cassini.yaml](conf/logger/cassini.yaml). Then, change the `logger` argument in [conf/config.yaml](conf/config.yaml). Lastly, Don't forget to specify the `project` argument in [conf/logger/cassini.yaml](conf/logger/cassini.yaml). If you do not use wandb, please append `log_wandb=False` in the command.
 
 ## Training
 
