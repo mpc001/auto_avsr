@@ -1,0 +1,5 @@
+tqdm
+opencv-python
+ffmpeg-python
+sentencepiece
+scikit-image

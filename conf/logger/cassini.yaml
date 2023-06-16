@@ -1,0 +1,7 @@
+_target_: pytorch_lightning.loggers.WandbLogger
+log_model: True
+name: ${exp_name}
+offline: False
+project: auto_avsr
+mode: online
+entity:

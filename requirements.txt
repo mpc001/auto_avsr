@@ -1,0 +1,7 @@
+av
+scikit-image
+opencv-python
+sentencepiece
+wandb >= 0.12.11
+hydra-core == 1.3.0
+pytorch-lightning == 1.5.10

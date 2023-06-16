@@ -1,0 +1,7 @@
+pos_enc: none
+embed_unit: 128 
+att_unit: 512
+head: 8
+unit: 2048
+layer: 16
+dropout_rate: 0.0 
