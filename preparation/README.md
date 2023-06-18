@@ -19,7 +19,12 @@ To pre-process the LRS2 or LRS3 dataset, plrase follow these steps:
 
 1. Download the LRS2 or LRS3 dataset from the official website.
 
-2. If you leave `landmarks-dir` empty, the face detector will automatically track landmarks. However, if you prefer to use our pre-tracked landmarks from retinaface tracker, you can download them from [here](https://github.com/mpc001/Visual_Speech_Recognition_for_Multiple_Languages/tree/master#autoavsr-models) and decompress them.
+2. If you leave `landmarks-dir` empty, the face detector will automatically track landmarks. However, if you prefer to use our pre-tracked landmarks from retinaface tracker, you can download them below.
+
+| File Name              | Source URL                                                                              | File Size  |
+|------------------------|-----------------------------------------------------------------------------------------|------------|
+| LRS3_landmarks.zip     |[GoogleDrive](https://bit.ly/33rEsax) or [BaiduDrive](https://bit.ly/3rwQSph)(key: mi3c) |     18GB   |
+| LRS2_landmarks.zip     |[GoogleDrive](https://bit.ly/3jSMMoz) or [BaiduDrive](https://bit.ly/3BuIwBB)(key: 53rc) |     9GB    |
 
 3. Run the following command to preprocess the dataset:
 

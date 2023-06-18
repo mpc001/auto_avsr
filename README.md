@@ -109,7 +109,7 @@ python main.py exp_dir=[exp_dir] exp_name=[exp_name] data.modality=[modality] ck
 
 - `optimizer.lr`: The learing rate used. Default: 1e-3.
 
-- Note: The performance [below](#model-zoo) are tested on with 8 machines (64 GPUs) with the use of front-end module [VSR accuracy: 89.6%; ASR accuracy: 99.1%] from the [LRW model zoo](https://github.com/mpc001/Lipreading_using_Temporal_Convolutional_Networks#model-zoo) for initialisation.
+- Note: The performance [below](#model-zoo) were trained using 4 machines (32 GPUs), except for the models that were trained using VoxCeleb2 and/or AVSpeech, which used 8 machines (64GPUs). Additionally, for the model that was pre-trained on LRW, we used the front-end module [VSR accuracy: 89.6%; ASR accuracy: 99.1%] from the [LRW model zoo](https://github.com/mpc001/Lipreading_using_Temporal_Convolutional_Networks#model-zoo) for initialisation.
 
 ### Training from scratch through curriculum learning
 
