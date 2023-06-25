@@ -1,6 +1,4 @@
 # Auto-AVSR: Audio-Visual Speech Recognition
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/auto-avsr-audio-visual-speech-recognition/lipreading-on-lrs2)](https://paperswithcode.com/sota/lipreading-on-lrs2?p=auto-avsr-audio-visual-speech-recognition)
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/auto-avsr-audio-visual-speech-recognition/automatic-speech-recognition-on-lrs2)](https://paperswithcode.com/sota/automatic-speech-recognition-on-lrs2?p=auto-avsr-audio-visual-speech-recognition)
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/auto-avsr-audio-visual-speech-recognition/audio-visual-speech-recognition-on-lrs3-ted)](https://paperswithcode.com/sota/audio-visual-speech-recognition-on-lrs3-ted?p=auto-avsr-audio-visual-speech-recognition)
 
 ## Authors
@@ -164,11 +162,13 @@ The table below contains WER on the test of LRS3.
 | **Visual-only**                 |        |       |                                                                                                              |            |
 | LRS3                            |  438   |  36.6 | [GoogleDrive](https://bit.ly/3COKHDn) / [BaiduDrive](https://bit.ly/3PdZKxy) (key: xv9r)                     |    250     |
 | LRS2+LRS3                       |  661   |  32.7 | [GoogleDrive](https://bit.ly/443AzBY) / [BaiduDrive](https://bit.ly/3PfLbd8) (key: 4uew)                     |    250     |
+| LRS3+VOX2                       |  1759  |  25.1 | [GoogleDrive](https://bit.ly/3qYxMMq) / [BaiduDrive](https://bit.ly/3pcudSk) (key: vgh8)                     |    250     |
 | LRW+LRS2+LRS3+VOX2+AVSP         |  3448  |  19.1 | [GoogleDrive](http://bit.ly/40EAtyX) / [BaiduDrive](https://bit.ly/3ZjbrV5) (key: dqsy)                      |    250     |
 | **Audio-only**                  |        |       |                                                                                                              |            |
 | LRS3                            |  438   |  2.0  | [GoogleDrive](https://bit.ly/3p5rV7o) / [BaiduDrive](https://bit.ly/4639mRL) (key: 2x2a)                     |    243     |
 | LRS2+LRS3                       |  661   |  1.7  | [GoogleDrive](https://bit.ly/3Nz9rFE) / [BaiduDrive](https://bit.ly/3CxMIn3) (key: s1ra)                     |    243     |
 | LRW+LRS2+LRS3                   |  818   |  1.6  | [GoogleDrive](https://bit.ly/3JhKzje) / [BaiduDrive](https://bit.ly/46amLrq) (key: 9i2w)                     |    243     |
+| LRS3+VOX2                       |  1759  |  1.1  | [GoogleDrive](https://bit.ly/44jsg5a) / [BaiduDrive](https://bit.ly/3PCwFMm) (key: x6wu)                     |    243     |
 | LRW+LRS2+LRS3+VOX2+AVSP         |  3448  |  1.0  | [GoogleDrive](http://bit.ly/3ZSdh0l) / [BaiduDrive](http://bit.ly/3Z1TlGU) (key: dvf2)                       |    243     |
 
 ‡The total hours are counted by including the datasets used for both pre-training and training.
