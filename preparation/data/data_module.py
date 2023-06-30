@@ -19,6 +19,7 @@ class AVSRDataLoader:
 
                 self.landmarks_detector = LandmarksDetector(device="cuda:0")
                 self.video_process = VideoProcess(convert_gray=convert_gray)
+
             if detector == "mediapipe":
                 from detectors.mediapipe.detector import LandmarksDetector
                 from detectors.mediapipe.video_process import VideoProcess

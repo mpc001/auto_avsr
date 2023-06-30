@@ -94,7 +94,13 @@ After pre-processing a custom dataset, you will need to create a dataset configu
 To fine-tune a ASR/VSR on a custom dataset, there is no need to load a model pre-trained on LRW but our best available model. Checkpoints can be found at [model zoo](https://github.com/mpc001/auto_avsr/tree/main#model-zoo).
 
 ```Shell
-python main.py exp_dir=[exp_dir] exp_name=[exp_name] data.modality=[modality] ckpt_path=[ckpt_path] data/dataset=[dataset] optimizer.lr=[lr] trainer.num_nodes=[num_nodes]
+python main.py exp_dir=[exp_dir] \
+               exp_name=[exp_name] \
+               data.modality=[modality] \
+               ckpt_path=[ckpt_path] \
+               data/dataset=[dataset] \
+               optimizer.lr=[lr] \
+               trainer.num_nodes=[num_nodes]
 ```
 
 - `data/dataset`: The custom dataset configuration file. Default: `lrs3`.

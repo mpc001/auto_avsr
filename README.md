@@ -92,7 +92,13 @@ By default, we use `data/dataset=lrs3`, which corresponds to [lrs3.yaml](conf/da
 To fine-tune a ASR/VSR from a pre-trained model, for instance, LRW, you can run the command below. Note that the argument `ckpt_path=[ckpt_path] transfer_frontend=True` is specifically used to load the weights of the pre-trained front-end component only.
 
 ```Shell
-python main.py exp_dir=[exp_dir] exp_name=[exp_name] data.modality=[modality] ckpt_path=[ckpt_path] transfer_frontend=True optimizer.lr=[lr] trainer.num_nodes=[num_nodes]
+python main.py exp_dir=[exp_dir] \
+               exp_name=[exp_name] \
+               data.modality=[modality] \
+               ckpt_path=[ckpt_path] \
+               transfer_frontend=True \
+               optimizer.lr=[lr] \
+               trainer.num_nodes=[num_nodes]
 ```
 
 - `exp_dir` and `exp_name`: The directory where the checkpoints will be saved, will be stored at the location `[exp_dir]`/`[exp_name]`.
@@ -103,9 +109,9 @@ python main.py exp_dir=[exp_dir] exp_name=[exp_name] data.modality=[modality] ck
 
 - `transfer_frontend`: This argument loads only the front-end module of `[ckpt_path]` for fine-tuning.
 
-- `trainer.num_nodes`: The number of machines used. Default: 1.
-
 - `optimizer.lr`: The learing rate used. Default: 1e-3.
+
+- `trainer.num_nodes`: The number of machines used. Default: 1.
 
 - Note: The performance [below](#model-zoo) were trained using 4 machines (32 GPUs), except for the models that were trained using VoxCeleb2 and/or AVSpeech, which used 8 machines (64GPUs). Additionally, for the model that was pre-trained on LRW, we used the front-end module [VSR accuracy: 89.6%; ASR accuracy: 99.1%] from the [LRW model zoo](https://github.com/mpc001/Lipreading_using_Temporal_Convolutional_Networks#model-zoo) for initialisation.
 
@@ -117,13 +123,24 @@ The end-to-end model trained from scratch results in poor performance. This is l
 **[Step 1]** Train the model using a 23-hour subset of LRS3 that includes only short utterances lasting no more than 4 seconds.
 
 ```Shell
-python main.py exp_dir=[exp_dir] exp_name=[exp_name] data.modality=[modality] data.dataset.train_file=[train_file] optimizer.lr=[lr] trainer.num_nodes=[num_nodes]
+python main.py exp_dir=[exp_dir] \
+               exp_name=[exp_name] \
+               data.modality=[modality] \
+               data.dataset.train_file=[train_file] \
+               optimizer.lr=[lr] \
+               trainer.num_nodes=[num_nodes]
 ```
 
 **[Step 2]** Use the best checkpoint from Step 1 to initialise the model and train the model with the full LRS3 dataset.
 
 ```Shell
-python main.py exp_dir=[exp_dir] exp_name=[exp_name] data.modality=[modality] data.dataset.train_file=[train_file] optimizer.lr=[lr] trainer.num_nodes=[num_nodes] ckpt_path=[ckpt_path]
+python main.py exp_dir=[exp_dir] \
+               exp_name=[exp_name] \
+               data.modality=[modality] \
+               data.dataset.train_file=[train_file] \
+               optimizer.lr=[lr] \
+               trainer.num_nodes=[num_nodes] \
+               ckpt_path=[ckpt_path]
 ```
 
 `data.dataset.train_file`: The training set list. Default: `lrs3_train_transcript_lengths_seg24s.csv`, which contains utterances lasting no more than 24 seconds.
@@ -131,7 +148,12 @@ python main.py exp_dir=[exp_dir] exp_name=[exp_name] data.modality=[modality] da
 ## Testing
 
 ```Shell
-python main.py exp_dir=[exp_dir] exp_name=[exp_name] data.modality=[modality] ckpt_path=[ckpt_path] trainer.num_nodes=1 train=False
+python main.py exp_dir=[exp_dir] \
+               exp_name=[exp_name] \
+               data.modality=[modality] \
+               ckpt_path=[ckpt_path] \
+               trainer.num_nodes=1 \
+               train=False
 ```
 - `ckpt_path`: The absolute path of the ensembled checkpoint file. In this case, `ckpt_path` is always set the file `[exp_dir]/[exp_name]/model_avg_10.pth`. Default: `null`.
 
@@ -142,7 +164,10 @@ python main.py exp_dir=[exp_dir] exp_name=[exp_name] data.modality=[modality] ck
 ## Inference
 
 ```Shell
-python infer.py data.modality=[modality] ckpt_path=[ckpt_path] trainer.num_nodes=1 infer_path=[infer_path]
+python infer.py data.modality=[modality] \
+                ckpt_path=[ckpt_path] \
+                trainer.num_nodes=1 \
+                infer_path=[infer_path]
 ```
 
 - `ckpt_path`: The absolute path of the ensembled checkpoint file. In this case, `ckpt_path` is always set the file `[exp_dir]/[exp_name]/model_avg_10.pth`. Default: `null`.
