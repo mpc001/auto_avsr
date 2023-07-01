@@ -6,8 +6,8 @@
 [📘Introduction](#introduction) |
 [🤗Demo](#demo) |
 [📊Training](#Training) |
-[🔮Test](#Testing) |
-[🐯Model zoo](#Model-zoo) |
+[🔮Testing](#Testing) |
+[🐯Model](#Model-zoo) |
 [📝License](#License)
 </div>
 
