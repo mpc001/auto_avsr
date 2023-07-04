@@ -27,7 +27,10 @@ parser.add_argument(
     help="Directory where the audio sequence is stored.",
 )
 parser.add_argument(
-    "--label-dir", type=str, default="", help="Directory where lid.csv is saved."
+    "--label-dir",
+    type=str,
+    default="",
+    help="Directory where lid.csv is saved.",
 )
 parser.add_argument(
     "--landmarks-dir",
@@ -36,7 +39,9 @@ parser.add_argument(
     help="Directory where the landmarks data is stored.",
 )
 parser.add_argument(
-    "--detector", type=str, help="Face detector used for the experiment."
+    "--detector",
+    type=str,
+    help="Face detector used for the experiment.",
 )
 parser.add_argument(
     "--root-dir",
@@ -51,7 +56,10 @@ parser.add_argument(
     help="Name of the dataset used for the experiment.",
 )
 parser.add_argument(
-    "--seg-duration", type=int, default=24, help="Length of the segment in seconds."
+    "--seg-duration",
+    type=int,
+    default=24,
+    help="Length of the segment in seconds.",
 )
 parser.add_argument(
     "--combine-av",
@@ -60,7 +68,10 @@ parser.add_argument(
     help="Merges the audio and video components to a media file.",
 )
 parser.add_argument(
-    "--groups", type=int, default=1, help="Number of threads to be used in parallel."
+    "--groups",
+    type=int,
+    default=1,
+    help="Number of threads to be used in parallel.",
 )
 parser.add_argument(
     "--job-index",

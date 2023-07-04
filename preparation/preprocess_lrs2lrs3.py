@@ -53,7 +53,10 @@ parser.add_argument(
     help="Name of the dataset used in the experiment.",
 )
 parser.add_argument(
-    "--seg-duration", type=int, default=24, help="Length of the segment in seconds."
+    "--seg-duration",
+    type=int,
+    default=24,
+    help="Length of the segment in seconds.",
 )
 parser.add_argument(
     "--combine-av",
@@ -62,7 +65,10 @@ parser.add_argument(
     help="Merges the audio and video components to a media file.",
 )
 parser.add_argument(
-    "--groups", type=int, default=1, help="Number of threads to be used in parallel."
+    "--groups",
+    type=int,
+    default=1,
+    help="Number of threads to be used in parallel.",
 )
 parser.add_argument(
     "--job-index",

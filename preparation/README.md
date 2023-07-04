@@ -29,27 +29,39 @@ To pre-process the LRS2 or LRS3 dataset, plrase follow these steps:
 3. Run the following command to preprocess the dataset:
 
 ```Shell
-python preprocess_lrs2lrs3.py --data-dir [data_dir] --landmarks-dir [landmarks_dir] --detector [detector] --root-dir [root_dir] --dataset [dataset] --seg-duration [seg_duration] --subset [subset] --groups [n] --job-index [j]
+python preprocess_lrs2lrs3.py \
+    --data-dir [data_dir] \
+    --landmarks-dir [landmarks_dir] \
+    --detector [detector] \
+    --root-dir [root_dir] \
+    --dataset [dataset] \
+    --subset [subset] \
+    --seg-duration [seg_duration] \
+    --groups [n] \
+    --job-index [j]
 ```
 - `data-dir`: Path to the directory containing video files.
 - `landmarks-dir`: Path to the directory containing landmarks files. If the `landmarks-dir` is specified, face detector will not be used.
 - `detector`: Type of face detector. Valid values are: `mediapipe` and `retinaface`. Default: `retinaface`.
 - `root-dir`: Path to the root directory where all preprocessed files will be stored.
-- `dataset`: Name of the dataset.
-- `subset`: For LRS2, the subset can be `train`, `val`, and `test`. For LRS3, the subset can be `train` and `test`.
+- `dataset`: Name of the dataset. Valid values are: `lrs2` and `lrs3`.
+- `subset`: For `lrs2`, the subset can be `train`, `val`, and `test`. For `lrs3`, the subset can be `train` and `test`.
 - `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
-- `combine-av`: Whether or not combine merge audio into video streams. Default: `false`. Valid values are `true` and `false`.
 - `groups`: Number of groups to split the dataset into.
 - `job-index`: Job index for the current group. Valid values are an integer within the range of `[0, n)`.
 
 3. Run the following command to merge all labels:
 
 ```Shell
-python merge.py --root-dir [root_dir] --dataset [dataset] --subset [subset] --seg_duration [seg_duration] --groups [n]
+python merge.py \
+    --root-dir [root_dir] \
+    --dataset [dataset] \
+    --subset [subset] \
+    --seg-duration [seg_duration] \
+    --groups [n]
 ```
-
 - `root-dir`: Path to the root directory where all preprocessed files will be stored.
-- `dataset`: Name of the dataset.
+- `dataset`: Name of the dataset. Valid values are: `lrs2` and `lrs3`.
 - `subset`: The subset name of the dataset. For LRS2, valid values are `train`, `val`, and `test`. For LRS3, valid values are `train` and `test`.
 - `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
 - `groups`: Number of groups to split the dataset into.
@@ -72,7 +84,17 @@ To pre-process the VoxCeleb2 dataset, please follow these steps:
 3. Run the following command to preprocess the dataset:
 
 ```Shell
-python preprocess_vox2.py --vid-dir [vid_dir] --aud-dir [aud_dir] --label-dir [label_dir] --landmarks-dir [landmarks_dir] --detector [detector] --root-dir [root_dir] --dataset [dataset] --seg-duration [seg_duration] --groups [n] --job-index [j]
+python preprocess_vox2.py \
+    --vid-dir [vid_dir] \
+    --aud-dir [aud_dir] \
+    --label-dir [label_dir] \
+    --landmarks-dir [landmarks_dir] \
+    --detector [detector] \
+    --root-dir [root_dir] \
+    --dataset [dataset] \
+    --seg-duration [seg_duration] \
+    --groups [n] \
+    --job-index [j]
 ```
 - `vid-dir`: Path to the directory containing video files.
 - `aud-dir`: Path to the directory containing audio files.
@@ -82,7 +104,6 @@ python preprocess_vox2.py --vid-dir [vid_dir] --aud-dir [aud_dir] --label-dir [l
 - `root-dir`: Path to the root directory where all preprocessed files will be stored.
 - `dataset`: Name of the dataset. Default: `vox2`.
 - `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
-- `combine-av`: Whether or not combine merge audio into video streams. Default: `false`. Valid values are `true` and `false`.
 - `groups`: Number of groups to split the dataset into.
 - `job-index`: Job index for the current group and should be an integer within the range of `[0, n)`.
 
@@ -93,10 +114,15 @@ This command will preprocess the dataset and store the preprocessed files in the
 5. Run the following command to generate transcripts:
 
 ```Shell
-python asr_infer.py --root-dir [root-dir] --dataset [dataset] --seg-duration [seg_duration] --groups [n] --job-index [j]
+python asr_infer.py \
+    --root-dir [root-dir] \
+    --dataset [dataset] \
+    --seg-duration [seg_duration] \
+    --groups [n] \
+    --job-index [j]
 ```
 - `root-dir`: Path to the root directory where all preprocessed files are stored.
-- `dataset`: Name of the dataset.
+- `dataset`: Name of the dataset. Valid value is: `vox2`.
 - `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
 - `groups`: Number of groups the dataset was split into during preprocessing.
 - `job-index`: Job index for the current group.
@@ -104,5 +130,15 @@ python asr_infer.py --root-dir [root-dir] --dataset [dataset] --seg-duration [se
 6. Run the following command to merge all labels. (Same as the merge solution at [preprocessing-lrs2-or-lrs3](#preprocessing-lrs2-or-lrs3))
 
 ```Shell
-python merge.py --root-dir [root_dir] --dataset [dataset] --subset [subset] --seg_duration [seg_duration] --groups [n]
+python merge.py \
+    --root-dir [root_dir] \
+    --dataset [dataset] \
+    --subset [subset] \
+    --seg-duration [seg_duration] \
+    --groups [n]
 ```
+- `root-dir`: Path to the root directory where all preprocessed files will be stored.
+- `dataset`: Name of the dataset. Valid value is: `vox2`
+- `subset`: The subset name of the dataset. For `vox2`, valid value is `train`.
+- `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
+- `groups`: Number of groups to split the dataset into.

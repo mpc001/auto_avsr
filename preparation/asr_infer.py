@@ -24,7 +24,10 @@ parser.add_argument(
     help="Name of the dataset used in the experiment.",
 )
 parser.add_argument(
-    "--seg-duration", type=int, default=24, help="specify the segment length"
+    "--seg-duration",
+    type=int,
+    default=24,
+    help="specify the segment length",
 )
 parser.add_argument(
     "--job-index",
@@ -33,7 +36,10 @@ parser.add_argument(
     help="Index to identify separate jobs (useful for parallel processing).",
 )
 parser.add_argument(
-    "--groups", type=int, default=1, help="Number of threads to be used in parallel."
+    "--groups",
+    type=int,
+    default=1,
+    help="Number of threads to be used in parallel.",
 )
 args = parser.parse_args()
 

@@ -27,7 +27,10 @@ parser.add_argument(
     help="Number of threads for parallel processing",
 )
 parser.add_argument(
-    "--seg-duration", type=int, default=24, help="Length of the segments"
+    "--seg-duration",
+    type=int,
+    default=24,
+    help="Length of the segments",
 )
 args = parser.parse_args()
 
