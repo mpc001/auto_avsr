@@ -6,19 +6,19 @@ parser.add_argument(
     "--dataset",
     type=str,
     required=True,
-    help="Specify the dataset used in the experiment",
+    help="Name of dataset",
 )
 parser.add_argument(
     "--subset",
     type=str,
     required=True,
-    help="Specify the subset of the dataset used in the experiment",
+    help="Subset of dataset",
 )
 parser.add_argument(
     "--root-dir",
     type=str,
     required=True,
-    help="Directory of saved mouth patches or embeddings",
+    help="Root directory of preprocessed dataset",
 )
 parser.add_argument(
     "--groups",
@@ -30,7 +30,7 @@ parser.add_argument(
     "--seg-duration",
     type=int,
     default=24,
-    help="Length of the segments",
+    help="Max duration (second) for each segment, (Default: 24)",
 )
 args = parser.parse_args()
 

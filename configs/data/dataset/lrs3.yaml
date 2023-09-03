@@ -1,0 +1,7 @@
+defaults:
+  - _self_
+root_dir:
+label_dir: "labels"
+train_file: "lrs3_train_transcript_lengths_seg24s.csv"
+val_file: "lrs3_test_transcript_lengths_seg24s.csv"
+test_file: "lrs3_test_transcript_lengths_seg24s.csv"

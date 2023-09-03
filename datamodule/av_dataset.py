@@ -38,7 +38,7 @@ def load_audio(path):
 class AVDataset(torch.utils.data.Dataset):
     def __init__(
         self,
-        root,
+        root_dir,
         label_path,
         subset,
         modality,
@@ -47,7 +47,7 @@ class AVDataset(torch.utils.data.Dataset):
         rate_ratio=640,
     ):
 
-        self.root = root
+        self.root_dir = root_dir
 
         self.modality = modality
         self.rate_ratio = rate_ratio
@@ -73,7 +73,7 @@ class AVDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         dataset_name, rel_path, input_length, token_id = self.list[idx]
-        path = os.path.join(self.root, dataset_name, rel_path)
+        path = os.path.join(self.root_dir, dataset_name, rel_path)
         if self.modality == "video":
             video = load_video(path)
             video = self.video_transform(video)

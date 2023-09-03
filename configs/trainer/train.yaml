@@ -1,0 +1,11 @@
+precision: 32
+max_epochs: 75
+num_nodes: 1
+gpus: -1
+sync_batchnorm: True
+default_root_dir: ${exp_dir}
+num_sanity_val_steps: 0
+accumulate_grad_batches: 1
+gradient_clip_val: 5.0
+replace_sampler_ddp: False
+resume_from_checkpoint:

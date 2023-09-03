@@ -33,9 +33,9 @@ class AVSRDataLoader:
             audio = self.audio_process(audio, sample_rate)
             return audio
         if self.modality == "video":
-            if not landmarks:
-                landmarks = self.landmarks_detector(data_filename)
             video = self.load_video(data_filename)
+            if not landmarks:
+                landmarks = self.landmarks_detector(video)
             video = self.video_process(video, landmarks)
             if video is None:
                 raise TypeError("video cannot be None")

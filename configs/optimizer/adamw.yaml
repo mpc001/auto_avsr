@@ -1,0 +1,4 @@
+name: adamw
+lr: 1e-3
+warmup_epochs: 5
+weight_decay: 0.03

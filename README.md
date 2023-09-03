@@ -1,196 +1,172 @@
-<p align="center"><img width="160" src="doc/lip_white.png" alt="logo"></p>
-<h1 align="center">Auto-AVSR: Audio-Visual Speech Recognition</h1>
+# Auto-AVSR: Lip-Reading Sentences Project
 
-<div align="center">
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/auto-avsr-audio-visual-speech-recognition/lipreading-on-lrs3-ted)](https://paperswithcode.com/sota/lipreading-on-lrs3-ted?p=auto-avsr-audio-visual-speech-recognition)
 
-[📘Introduction](#introduction) |
-[🤗Demo](#demo) |
-[📊Training](#Training) |
-[🔮Testing](#Testing) |
-[🐯Model](#Model-zoo) |
-[📝License](#License)
-</div>
+## Update
 
-<div align="center">
-
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/auto-avsr-audio-visual-speech-recognition/audio-visual-speech-recognition-on-lrs3-ted)](https://paperswithcode.com/sota/audio-visual-speech-recognition-on-lrs3-ted?p=auto-avsr-audio-visual-speech-recognition)
-
-</div>
+`2023-07-26`: We released the implementation of [Real-Time AV-ASR](https://github.com/pytorch/audio/tree/main/examples/avsr).
 
 ## Introduction
 
-This is the repository of [Auto-AVSR: Audio-Visual Speech Recognition with Automatic Labels](https://arxiv.org/abs/2303.14307), which is the successor of [End-to-End Audio-Visual Speech Recognition with Conformers](https://arxiv.org/abs/2102.06657). This repository contains both training code and pre-trained models for end-to-end audio-only and visual-only speech recognition (lipreading). Additionally, we offer a tutorial that will walk you through the process of training an ASR/VSR model using your own datasets.
+This repository is an open-sourced framework for speech recognition, with a primary focus on visual speech (lip-reading). It is designed for end-to-end training, aiming to deliver state-of-the-art models and enable reproducibility on audio-visual speech benchmarks.
 
+<div align="center"><img src="doc/pipeline.png" width="640"/></div>
 
-## Demo
+By using this repository, you can achieve a word error rate (WER) of 20.3% for visual speech recognition (VSR) and 1.0% for audio speech recognition (ASR) on LRS3.
 
-<div align="center">
+## Setup
 
-<img src='doc/autoavsr_demo.gif' title='autoavsr_demo.gif' style='max-width:320px'></img>
+1. Set up environment:
 
-</div>
+```Shell
+conda create -y -n auto_avsr python=3.8
+conda activate auto_avsr
+```
 
-You can check out our [gradio demo](https://huggingface.co/spaces/mpc001/auto_avsr) below to inference your video (English) with our audio-only, visual-only and audio-visual speech recognition models.
-
-## Preparing the environment
-
-1. Clone the repository and navigate to it:
+2. Clone repository:
 
 ```Shell
 git clone https://github.com/mpc001/auto_avsr
 cd auto_avsr
 ```
 
-2. Set up the environment:
+3. Install fairseq within the repository:
 
-```Shell
-conda create -y -n autoavsr python=3.8
-conda activate autoavsr
+```
+git clone https://github.com/pytorch/fairseq
+cd fairseq
+pip install --editable ./
+cd ..
 ```
 
-3. To install the necessary packages, please follow the steps below:
+4. Install PyTorch (tested pytorch version: v2.0.1) and other packages:
 
-- Step 3.1. Install pytorch, torchvision, and torchaudio by following instructions [here](https://pytorch.org/get-started/).
+```Shell
+pip install torch torchvision torchaudio
+pip install pytorch-lightning==1.5.10
+pip install sentencepiece
+pip install av
+pip install hydra-core --upgrade
+```
 
-- Step 3.2. Install fairseq.
-
-    ```Shell
-    git clone https://github.com/pytorch/fairseq
-    cd fairseq
-    pip install --editable ./
-    ```
-
-- Step 3.3. Install ffmpeg by running the following command:
-
-    ```Shell
-    conda install -c conda-forge ffmpeg
-    ```
-
-- Step 3.4. Install additional packages by running the following command:
-
-    ```Shell
-    pip install -r requirements.txt
-    ```
-
-4. Prepare the dataset. See the instructions in the [preparation](./preparation) folder.
-
-## Logging
-
-For logging training process, we use [wandb](https://wandb.ai/). To customize the yaml file, match the file name with the team name in your account, e.g. [cassini.yaml](conf/logger/cassini.yaml). Then, change the `logger` argument in [conf/config.yaml](conf/config.yaml). Lastly, Don't forget to specify the `project` argument in [conf/logger/cassini.yaml](conf/logger/cassini.yaml). If you do not use wandb, please append `log_wandb=False` in the command.
+5. Prepare the dataset. See the instructions in the [preparation](./preparation) folder.
 
 ## Training
 
-By default, we use `data/dataset=lrs3`, which corresponds to [lrs3.yaml](conf/data/dataset/lrs3.yaml) in the configuration folder. To set up experiments, please fill in the `root` argument in the yaml file.
-
-### Training from a pre-trained model
-
-To fine-tune a ASR/VSR from a pre-trained model, for instance, LRW, you can run the command below. Note that the argument `ckpt_path=[ckpt_path] transfer_frontend=True` is specifically used to load the weights of the pre-trained front-end component only.
-
 ```Shell
 python main.py exp_dir=[exp_dir] \
                exp_name=[exp_name] \
                data.modality=[modality] \
-               ckpt_path=[ckpt_path] \
-               transfer_frontend=True \
-               optimizer.lr=[lr] \
-               trainer.num_nodes=[num_nodes]
-```
-
-- `exp_dir` and `exp_name`: The directory where the checkpoints will be saved, will be stored at the location `[exp_dir]`/`[exp_name]`.
-
-- `data.modality`: The valid values for the input modality: `video`, `audio`, and `audiovisual`.
-
-- `ckpt_path`: The absolute path to the pre-trained checkpoint file.
-
-- `transfer_frontend`: This argument loads only the front-end module of `[ckpt_path]` for fine-tuning.
-
-- `optimizer.lr`: The learing rate used. Default: 1e-3.
-
-- `trainer.num_nodes`: The number of machines used. Default: 1.
-
-- Note: The performance [below](#model-zoo) were trained using 4 machines (32 GPUs), except for the models that were trained using VoxCeleb2 and/or AVSpeech, which used 8 machines (64GPUs). Additionally, for the model that was pre-trained on LRW, we used the front-end module [VSR accuracy: 89.6%; ASR accuracy: 99.1%] from the [LRW model zoo](https://github.com/mpc001/Lipreading_using_Temporal_Convolutional_Networks#model-zoo) for initialisation.
-
-### Training from scratch through curriculum learning
-
-**[Stage 1]** Train the model using a 23-hour subset of LRS3 that includes only short utterances lasting no more than 4 seconds (100 frames). We set `optimizer.lr` to 0.0002 at the first stage.
-
-```Shell
-python main.py exp_dir=[exp_dir] \
-               exp_name=[exp_name] \
-               data.modality=[modality] \
+               data.dataset.root_dir=[root_dir] \
                data.dataset.train_file=[train_file] \
-               optimizer.lr=[lr] \
-               trainer.num_nodes=[num_nodes]
-```
-
-**[Stage 2]** Use the best checkpoint from stage 1 to initialise the model and train the model with the full LRS3 dataset.
-
-```Shell
-python main.py exp_dir=[exp_dir] \
-               exp_name=[exp_name] \
-               data.modality=[modality] \
-               data.dataset.train_file=[train_file] \
-               optimizer.lr=[lr] \
                trainer.num_nodes=[num_nodes] \
-               ckpt_path=[ckpt_path]
 ```
+<details open>
+  <summary><strong>Required arguments</strong></summary>
 
-`data.dataset.train_file`: The training set list. Default: `lrs3_train_transcript_lengths_seg24s.csv`, which contains utterances lasting no more than 24 seconds.
+- `exp_dir`: Directory to save checkpoints and logs to.
+- `exp_name`: Experiment name. Location of checkpoints is `[exp_dir]`/`[exp_name]`.
+- `data.modality`: Type of input modality, valid values: `video` and `audio`.
+- `data.dataset.root_dir`: Root directory of preprocessed dataset, default: `null`.
+- `data.dataset.train_file`: Filename of training label list, default: `lrs3_train_transcript_lengths_seg24s.csv`.
+- `trainer.num_nodes`: Number of machines used, default: 1.
+- `trainer.resume_from_checkpoint`: Path of the checkpoint from which training is resumed, default: `null`.
+
+</details>
+
+<details>
+  <summary><strong>Optional arguments</strong></summary>
+
+- `data.dataset.val_file`: Filename of validation label list, default: `lrs3_test_transcript_lengths_seg24s.csv`.
+- `pretrained_model_path`: Path to the pre-trained model, default: `null`.
+- `transfer_frontend` Flag to load the weights of front-end module, works with `pretrained_model_path`.
+- `transfer_encoder` Flag to load the weights of encoder, works with `pretrained_model_path`.
+- `trainer.max_epochs`: Number of epochs, default: 75.
+- `trainer.gpus`: Number of GPUs to train on on each machine, default: -1, which use all gpus.
+- `data.max_frames`: Maximal number of frames in a batch, default: 1800.
+- `optimizer.lr`: Learning rate, default: 0.001.
+
+</details>
+
+
+<details open>
+  <summary><strong>Note</strong></summary>
+
+- For lrs3, start by training from scratch on a subset (23h, max duration=4 seconds) at a learning rate of 0.0002 (see [model-zoo](#model-zoo)). Then fine-tune on the full set with a learning rate of 0.001. A script for subset creation is available [here](./preparation/limit_length.py). For training new datasets, please refer to [instruction](INSTRUCTION.md).
+- If you want to monitor the training process, customise [logger](https://lightning.ai/docs/pytorch/1.5.8/api_references.html#loggers-api) within `pytorch_lightning.Trainer()`.
+- To maximize resource utilization, set `data.max_frames` to the largest to fit into your GPU memory.
+
+</details>
 
 ## Testing
 
 ```Shell
-python main.py exp_dir=[exp_dir] \
-               exp_name=[exp_name] \
-               data.modality=[modality] \
-               ckpt_path=[ckpt_path] \
-               trainer.num_nodes=1 \
-               train=False
+python eval.py data.modality=[modality] \
+               data.dataset.root_dir=[root_dir] \
+               data.dataset.test_file=[test_file] \
+               pretrained_model_path=[pretrained_model_path] \
 ```
-- `ckpt_path`: The absolute path of the ensembled checkpoint file. In this case, `ckpt_path` is always set the file `[exp_dir]/[exp_name]/model_avg_10.pth`. Default: `null`.
 
-- `decode.snr_target={snr}` can be appended to the command line if you want to test your model in a noisy environment, where `snr` is the signal-to-noise level. Default: `999999`.
+<details open>
+  <summary><strong>Required arguments</strong></summary>
 
-- `data.dataset.test_file={test_file}` can be appeneded to the command line if you want to test models on other datasets, where `test_file` is the testing set list. Default: `lrs3_test_transcript_lengths_seg24s.csv`.
+- `data.modality`: Type of input modality, valid values: `video` and `audio`.
+- `data.dataset.root_dir`: Root directory of preprocessed dataset, default: `null`.
+- `data.dataset.test_file`: Filename of testing label list, default: `lrs3_test_transcript_lengths_seg24s.csv`.
+- `pretrained_model_path`: Path to the pre-trained model, set to `[exp_dir]/[exp_name]/model_avg_10.pth`, default: `null`.
 
-## Inference
+</details>
+
+<details>
+  <summary><strong>Optional arguments</strong></summary>
+
+- `decode.snr_target=[snr_target]`: Level of signal-to-noise ratio (SNR), default: 999999.
+
+</details>
+
+## Demo
+
+Want to see how our asr/vsr model performs on your audio/video? Just run this command:
 
 ```Shell
-python infer.py data.modality=[modality] \
-                ckpt_path=[ckpt_path] \
-                trainer.num_nodes=1 \
-                infer_path=[infer_path]
+python demo.py  data.modality=[modality] \
+                pretrained_model_path=[pretrained_model_path] \
+                file_path=[file_path]
 ```
+<details open>
+  <summary><strong>Required arguments</strong></summary>
 
-- `ckpt_path`: The absolute path of the ensembled checkpoint file. In this case, `ckpt_path` is always set the file `[exp_dir]/[exp_name]/model_avg_10.pth`. Default: `null`.
+- `data.modality`: Type of input modality, valid values: `video` and `audio`.
+- `pretrained_model_path`: Path to the pre-trained model.
+- `file_path`: Path to the file for testing.
 
-- `infer_path`: The absolute path to the file you'd like to transcribe.
+</details>
 
-## Training on other datasets
-
-We provide an [instruction](INSTRUCTION.md) that will guide you through the process of training an ASR/VSR model on other datasets using our scripts.
 
 ## Model zoo
 
-The table below contains WER on the test of LRS3.
+We provide models for lrs3, and plan to release more (including av-asr) soon.
 
-| Total Training Data             | Hours‡ |  WER  | URL                                                                                                          | Params (M) |
-|:-------------------------------:|:------:|:-----:|:-------------------------------------------------------------------------------------------------------------|:----------:|
-| **Visual-only**                 |        |       |                                                                                                              |            |
-| LRS3                            |  438   |  36.6 | [GoogleDrive](https://bit.ly/3COKHDn) / [BaiduDrive](https://bit.ly/3PdZKxy) (key: xv9r)                     |    250     |
-| LRS2+LRS3                       |  661   |  32.7 | [GoogleDrive](https://bit.ly/443AzBY) / [BaiduDrive](https://bit.ly/3PfLbd8) (key: 4uew)                     |    250     |
-| LRS3+VOX2                       |  1759  |  25.1 | [GoogleDrive](https://bit.ly/3qYxMMq) / [BaiduDrive](https://bit.ly/3pcudSk) (key: vgh8)                     |    250     |
-| LRW+LRS2+LRS3+VOX2+AVSP         |  3448  |  19.1 | [GoogleDrive](http://bit.ly/40EAtyX) / [BaiduDrive](https://bit.ly/3ZjbrV5) (key: dqsy)                      |    250     |
-| **Audio-only**                  |        |       |                                                                                                              |            |
-| LRS3                            |  438   |  2.0  | [GoogleDrive](https://bit.ly/3p5rV7o) / [BaiduDrive](https://bit.ly/4639mRL) (key: 2x2a)                     |    243     |
-| LRS2+LRS3                       |  661   |  1.7  | [GoogleDrive](https://bit.ly/3Nz9rFE) / [BaiduDrive](https://bit.ly/3CxMIn3) (key: s1ra)                     |    243     |
-| LRW+LRS2+LRS3                   |  818   |  1.6  | [GoogleDrive](https://bit.ly/3JhKzje) / [BaiduDrive](https://bit.ly/46amLrq) (key: 9i2w)                     |    243     |
-| LRS3+VOX2                       |  1759  |  1.1  | [GoogleDrive](https://bit.ly/44jsg5a) / [BaiduDrive](https://bit.ly/3PCwFMm) (key: x6wu)                     |    243     |
-| LRW+LRS2+LRS3+VOX2+AVSP         |  3448  |  1.0  | [GoogleDrive](http://bit.ly/3ZSdh0l) / [BaiduDrive](http://bit.ly/3Z1TlGU) (key: dvf2)                       |    243     |
+<details open>
 
-‡The total hours are counted by including the datasets used for both pre-training and training.
+<summary>LRS3</summary>
+
+| Model                                 | Training data (h)  |  WER [%]   |    MD5            |
+|---------------------------------------|:------------------:|:----------:|:------------------------:|
+| [`vsr_trlrs3_23h_base.pth`](https://drive.google.com/file/d/1OBEHbStKKFG7VDij14RDLN9VYSdE_Bhs/view?usp=sharing)             |        23           |    96.6    | 50c88  |
+| [`vsr_trlrs3_base.pth`](https://drive.google.com/file/d/1aawSjxIL2ewo0W0fg4TBQgR8WMAmPeSL/view?usp=sharing)                 |        438          |    36.7    | ea3ec  |
+| [`vsr_trlrs3vox2_base.pth`](https://drive.google.com/file/d/1mLAuCnK2y7zbmiHlAXMqPSF_ApGqfbAD/view?usp=sharing)             |        1759         |    25.0    | 0a126  |
+| [`vsr_trlrwlrs2lrs3vox2avsp_base.pth`](https://drive.google.com/file/d/19GA5SqDjAkI5S88Jt5neJRG-q5RUi5wi/view?usp=sharing)  |        3448         |    20.3    | a896f  |
+| [`asr_trlrs3_23h_base.pth`](https://drive.google.com/file/d/1ERXLjBGFQDAXXKkHLBrVi6xI7l1QiKyL/view?usp=sharing)             |        23           |    72.5    | 87d45  |
+| [`asr_trlrs3_base.pth`](https://drive.google.com/file/d/1FuYLkBt6DFzxIR7AbCs6jzhbLfaJMk6a/view?usp=sharing)                 |        438          |    2.04    | 4fa87  |
+| [`asr_trlrs3vox2_base.pth`](https://drive.google.com/file/d/13o_KvPeLHkjFPVm28Gvn8EQNBkS5ZBV6/view?usp=sharing)             |        1759         |    1.07    | 7beab  |
+| [`asr_trlrwlrs2lrs3vox2avsp_base.pth`](https://drive.google.com/file/d/12vigJjL_ipgRz5CMYYQPdn8edEXD-Cuq/view?usp=sharing)  |        3448         |    0.99    | dc759  |
+
+</details>
 
 ## Citation
+
+If you find this repository helpful, please consider citing our work:
 
 ```bibtex
 @inproceedings{ma2023auto,
@@ -203,11 +179,17 @@ The table below contains WER on the test of LRS3.
 }
 ```
 
+## Acknowledgement
+
+This repository is built using the [espnet](https://github.com/espnet/espnet), [fairseq](https://github.com/facebookresearch/fairseq), [raven](https://github.com/ahaliassos/raven) and [avhubert](https://github.com/facebookresearch/av_hubert) repositories.
+
 ## License
 
-It is noted that the code can only be used for comparative or benchmarking purposes. Users can only use code supplied under a [License](./LICENSE) for non-commercial purposes.
+Code is Apache 2.0 licensed. The pre-trained models provided in this repository may have their own licenses or terms and conditions derived from the dataset used for training.
 
 ## Contact
+
+Contributions are welcome; feel free to create a PR or email me:
 
 ```
 [Pingchuan Ma](pingchuan.ma16[at]imperial.ac.uk)

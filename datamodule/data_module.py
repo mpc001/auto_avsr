@@ -57,7 +57,7 @@ class DataModule(LightningDataModule):
     def _dataloader(self, ds, sampler, collate_fn):
         return torch.utils.data.DataLoader(
             ds,
-            num_workers=self.cfg.num_workers,
+            num_workers=12,
             pin_memory=True,
             batch_sampler=sampler,
             collate_fn=collate_fn,
@@ -66,9 +66,9 @@ class DataModule(LightningDataModule):
     def train_dataloader(self):
         ds_args = self.cfg.data.dataset
         train_ds = AVDataset(
-            root=ds_args.root,
+            root_dir=ds_args.root_dir,
             label_path=os.path.join(
-                ds_args.root, ds_args.label_dir, ds_args.train_file
+                ds_args.root_dir, ds_args.label_dir, ds_args.train_file
             ),
             subset="train",
             modality=self.cfg.data.modality,
@@ -85,8 +85,8 @@ class DataModule(LightningDataModule):
     def val_dataloader(self):
         ds_args = self.cfg.data.dataset
         val_ds = AVDataset(
-            root=ds_args.root,
-            label_path=os.path.join(ds_args.root, ds_args.label_dir, ds_args.val_file),
+            root_dir=ds_args.root_dir,
+            label_path=os.path.join(ds_args.root_dir, ds_args.label_dir, ds_args.val_file),
             subset="val",
             modality=self.cfg.data.modality,
             audio_transform=AudioTransform("val"),
@@ -102,8 +102,8 @@ class DataModule(LightningDataModule):
     def test_dataloader(self):
         ds_args = self.cfg.data.dataset
         dataset = AVDataset(
-            root=ds_args.root,
-            label_path=os.path.join(ds_args.root, ds_args.label_dir, ds_args.test_file),
+            root_dir=ds_args.root_dir,
+            label_path=os.path.join(ds_args.root_dir, ds_args.label_dir, ds_args.test_file),
             subset="test",
             modality=self.cfg.data.modality,
             audio_transform=AudioTransform(

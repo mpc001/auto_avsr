@@ -81,9 +81,11 @@ def save_vid_aud_txt(
     audio_sample_rate=16000,
 ):
     # -- save video
-    save2vid(dst_vid_filename, trim_vid_data, video_fps)
+    if dst_vid_filename is not None:
+        save2vid(dst_vid_filename, trim_vid_data, video_fps)
     # -- save audio
-    save2aud(dst_aud_filename, trim_aud_data, audio_sample_rate)
+    if dst_aud_filename is not None:
+        save2aud(dst_aud_filename, trim_aud_data, audio_sample_rate)
     # -- save text
     os.makedirs(os.path.dirname(dst_txt_filename), exist_ok=True)
     f = open(dst_txt_filename, "w")

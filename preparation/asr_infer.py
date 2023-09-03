@@ -15,31 +15,31 @@ parser.add_argument(
     "--root-dir",
     type=str,
     required=True,
-    help="Directory where saved mouth patches or embeddings are stored.",
+    help="Root directory of preprocessed dataset",
 )
 parser.add_argument(
     "--dataset",
     type=str,
     default="vox2",
-    help="Name of the dataset used in the experiment.",
+    help="Name of dataset",
 )
 parser.add_argument(
     "--seg-duration",
     type=int,
     default=24,
-    help="specify the segment length",
+    help="Max duration (second) for each segment, (Default: 24)",
 )
 parser.add_argument(
     "--job-index",
     type=int,
     default=0,
-    help="Index to identify separate jobs (useful for parallel processing).",
+    help="Index to identify separate jobs (useful for parallel processing)",
 )
 parser.add_argument(
     "--groups",
     type=int,
     default=1,
-    help="Number of threads to be used in parallel.",
+    help="Number of threads to be used in parallel",
 )
 args = parser.parse_args()
 

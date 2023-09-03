@@ -1,0 +1,4 @@
+defaults:
+  - _self_
+  - visual_backbone: resnet_conformer
+  - audio_backbone: resnet_conformer

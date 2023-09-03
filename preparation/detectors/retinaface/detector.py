@@ -6,7 +6,6 @@
 
 import warnings
 
-import torchvision
 from ibug.face_alignment import FANPredictor
 from ibug.face_detection import RetinaFacePredictor
 
@@ -22,8 +21,7 @@ class LandmarksDetector:
         )
         self.landmark_detector = FANPredictor(device=device, model=None)
 
-    def __call__(self, filename):
-        video_frames = torchvision.io.read_video(filename, pts_unit="sec")[0].numpy()
+    def __call__(self, video_frames):
         landmarks = []
         for frame in video_frames:
             detected_faces = self.face_detector(frame, rgb=False)

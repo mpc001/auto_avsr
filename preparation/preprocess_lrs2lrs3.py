@@ -20,43 +20,43 @@ parser.add_argument(
     "--data-dir",
     type=str,
     required=True,
-    help="Directory where the sequence data is stored.",
+    help="Directory of original dataset",
 )
 parser.add_argument(
     "--detector",
     type=str,
     default="retinaface",
-    help="Face detector used in the experiment.",
+    help="Type of face detector. (Default: retinaface)",
 )
 parser.add_argument(
     "--landmarks-dir",
     type=str,
     default=None,
-    help="Directory where the landmarks data is stored.",
+    help="Directory of landmarks",
 )
 parser.add_argument(
     "--root-dir",
     type=str,
     required=True,
-    help="Directory of saved mouth patches or embeddings.",
+    help="Root directory of preprocessed dataset",
 )
 parser.add_argument(
     "--subset",
     type=str,
     required=True,
-    help="Subset of the dataset used in the experiment.",
+    help="Subset of dataset",
 )
 parser.add_argument(
     "--dataset",
     type=str,
     required=True,
-    help="Name of the dataset used in the experiment.",
+    help="Name of dataset",
 )
 parser.add_argument(
     "--seg-duration",
     type=int,
     default=24,
-    help="Length of the segment in seconds.",
+    help="Max duration (second) for each segment, (Default: 24)",
 )
 parser.add_argument(
     "--combine-av",
