@@ -54,7 +54,7 @@ pip install hydra-core --upgrade
 ## Training
 
 ```Shell
-python main.py exp_dir=[exp_dir] \
+python train.py exp_dir=[exp_dir] \
                exp_name=[exp_name] \
                data.modality=[modality] \
                data.dataset.root_dir=[root_dir] \
