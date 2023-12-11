@@ -8,7 +8,6 @@ from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 from pytorch_lightning.plugins import DDPPlugin
 from avg_ckpts import ensemble
 from datamodule.data_module import DataModule
-from lightning import ModelModule
 
 
 @hydra.main(version_base="1.3", config_path="configs", config_name="config")
@@ -28,6 +27,10 @@ def main(cfg):
     callbacks = [checkpoint, lr_monitor]
 
     # Set modules and trainer
+    if cfg.data.modality in ["audio", "visual"]:
+        from lightning import ModelModule
+    elif cfg.data.modality == "audiovisual":
+        from lightning_av import ModelModule
     modelmodule = ModelModule(cfg)
     datamodule = DataModule(cfg)
     trainer = Trainer(

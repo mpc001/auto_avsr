@@ -1,11 +1,11 @@
 import os
-
 import hydra
+
 import torch
 import torchaudio
 import torchvision
-from lightning import ModelModule
 from datamodule.transforms import AudioTransform, VideoTransform
+from datamodule.av_dataset import cut_or_pad
 
 
 class InferencePipeline(torch.nn.Module):
@@ -14,7 +14,7 @@ class InferencePipeline(torch.nn.Module):
         self.modality = cfg.data.modality
         if self.modality in ["audio", "audiovisual"]:
             self.audio_transform = AudioTransform(subset="test")
-        elif self.modality in ["video", "audiovisual"]:
+        if self.modality in ["video", "audiovisual"]:
             if detector == "mediapipe":
                 from preparation.detectors.mediapipe.detector import LandmarksDetector
                 from preparation.detectors.mediapipe.video_process import VideoProcess
@@ -27,6 +27,10 @@ class InferencePipeline(torch.nn.Module):
                 self.video_process = VideoProcess(convert_gray=False)
             self.video_transform = VideoTransform(subset="test")
 
+        if cfg.data.modality in ["audio", "visual"]:
+            from lightning import ModelModule
+        elif cfg.data.modality == "audiovisual":
+            from lightning_av import ModelModule
         self.modelmodule = ModelModule(cfg)
         self.modelmodule.model.load_state_dict(torch.load(cfg.pretrained_model_path, map_location=lambda storage, loc: storage))
         self.modelmodule.eval()
@@ -36,23 +40,36 @@ class InferencePipeline(torch.nn.Module):
         data_filename = os.path.abspath(data_filename)
         assert os.path.isfile(data_filename), f"data_filename: {data_filename} does not exist."
 
-        if self.modality == "audio":
+        if self.modality in ["audio", "audiovisual"]:
             audio, sample_rate = self.load_audio(data_filename)
             audio = self.audio_process(audio, sample_rate)
             audio = audio.transpose(1, 0)
             audio = self.audio_transform(audio)
-            with torch.no_grad():
-                transcript = self.modelmodule(audio)
 
-        if self.modality == "video":
+        if self.modality in ["video", "audiovisual"]:
             video = self.load_video(data_filename)
             landmarks = self.landmarks_detector(video)
             video = self.video_process(video, landmarks)
             video = torch.tensor(video)
             video = video.permute((0, 3, 1, 2))
             video = self.video_transform(video)
+
+        if self.modality in ["audio", "video"]:
             with torch.no_grad():
                 transcript = self.modelmodule(video)
+
+        elif self.modality == "audiovisual":
+            print(len(audio), len(video))
+            assert 530 < len(audio) // len(video) < 670, "The video frame rate should be between 24 and 30 fps."
+
+            rate_ratio = len(audio) // len(video)
+            if rate_ratio == 640:
+                pass
+            else:
+                print(f"The ideal video frame rate is set to 25 fps, but the current frame rate ratio, calculated as {len(video)*16000/len(audio):.1f}, which may affect the performance.")
+                audio = cut_or_pad(audio, len(video) * 640)
+            with torch.no_grad():
+                transcript = self.modelmodule(video, audio)
 
         return transcript
 

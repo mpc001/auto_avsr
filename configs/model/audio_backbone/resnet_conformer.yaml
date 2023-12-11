@@ -12,8 +12,8 @@ cnn_module_kernel: 31
 zero_triu: False
 a_upsample_ratio: 1
 relu_type: swish
-ddim: ${model.audio_backbone.adim}
-dheads: ${model.audio_backbone.aheads}
+ddim: 768
+dheads: 12
 dunits: 3072
 dlayers: 6
 lsm_weight: 0.1

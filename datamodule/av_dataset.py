@@ -11,7 +11,8 @@ def cut_or_pad(data, size, dim=0):
     """
     if data.size(dim) < size:
         padding = size - data.size(dim)
-        data = torch.nn.functional.pad(data, (0, padding), "constant")
+        data = torch.nn.functional.pad(data, (0, 0, 0, padding), "constant")
+        size = data.size(dim)
     elif data.size(dim) > size:
         data = data[:size]
     assert data.size(dim) == size

@@ -110,7 +110,7 @@ python eval.py data.modality=[modality] \
 <details open>
   <summary><strong>Required arguments</strong></summary>
 
-- `data.modality`: Type of input modality, valid values: `video` and `audio`.
+- `data.modality`: Type of input modality, valid values: `video`, `audio` and `audiovisual`.
 - `data.dataset.root_dir`: Root directory of preprocessed dataset, default: `null`.
 - `data.dataset.test_file`: Filename of testing label list, default: `lrs3_test_transcript_lengths_seg24s.csv`.
 - `pretrained_model_path`: Path to the pre-trained model, set to `[exp_dir]/[exp_name]/model_avg_10.pth`, default: `null`.
@@ -145,7 +145,7 @@ python demo.py  data.modality=[modality] \
 
 ## Model zoo
 
-We provide models for lrs3, and plan to release more (including av-asr) soon.
+We provide audio-only, visual-only and audio-visual models for lrs3.
 
 <details open>
 
@@ -161,6 +161,7 @@ We provide models for lrs3, and plan to release more (including av-asr) soon.
 | [`asr_trlrs3_base.pth`](https://drive.google.com/file/d/1FuYLkBt6DFzxIR7AbCs6jzhbLfaJMk6a/view?usp=sharing)                 |        438          |    2.04    | 4fa87  |
 | [`asr_trlrs3vox2_base.pth`](https://drive.google.com/file/d/13o_KvPeLHkjFPVm28Gvn8EQNBkS5ZBV6/view?usp=sharing)             |        1759         |    1.07    | 7beab  |
 | [`asr_trlrwlrs2lrs3vox2avsp_base.pth`](https://drive.google.com/file/d/12vigJjL_ipgRz5CMYYQPdn8edEXD-Cuq/view?usp=sharing)  |        3448         |    0.99    | dc759  |
+| [`avsr_trlrwlrs2lrs3vox2avsp_base.pth`](https://drive.google.com/file/d/1mU6MHzXMiq1m6GI-8gqT2zc2bdStuBXu/view?usp=sharing)  |        3448         |    0.93    | 6b3c5  |
 
 </details>
 
