@@ -54,9 +54,12 @@ class InferencePipeline(torch.nn.Module):
             video = video.permute((0, 3, 1, 2))
             video = self.video_transform(video)
 
-        if self.modality in ["audio", "video"]:
+        if self.modality == "video":
             with torch.no_grad():
                 transcript = self.modelmodule(video)
+        elif self.modality == "audio":
+            with torch.no_grad():
+                transcript = self.modelmodule(audio)
 
         elif self.modality == "audiovisual":
             print(len(audio), len(video))

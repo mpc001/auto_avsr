@@ -49,7 +49,13 @@ pip install av
 pip install hydra-core --upgrade
 ```
 
-5. Prepare the dataset. See the instructions in the [preparation](./preparation) folder.
+5. Install ffmpeg:
+
+```
+conda install "ffmpeg<5" -c conda-forge
+```
+
+6. Prepare the dataset. See the instructions in the [preparation](./preparation) folder.
 
 ## Training
 
