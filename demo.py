@@ -27,7 +27,7 @@ class InferencePipeline(torch.nn.Module):
                 self.video_process = VideoProcess(convert_gray=False)
             self.video_transform = VideoTransform(subset="test")
 
-        if cfg.data.modality in ["audio", "visual"]:
+        if cfg.data.modality in ["audio", "video"]:
             from lightning import ModelModule
         elif cfg.data.modality == "audiovisual":
             from lightning_av import ModelModule
