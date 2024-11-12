@@ -66,7 +66,7 @@ python preprocess_lrs2lrs3.py \
 - `detector`: Type of face detector. Valid values are: `mediapipe` and `retinaface`. Default: `retinaface`.
 - `root-dir`: Root directory of preprocessed dataset.
 - `dataset`: Name of dataset. Valid values are: `lrs2` and `lrs3`.
-- `gpu_type`: Type of GPU to use. Valid values are `cuda` and `mps`.
+- `gpu_type`: Type of GPU to use. Valid values are `cuda` and `mps`. Default: `cuda`.
 - `subset`: Subset of dataset. For `lrs2`, the subset can be `train`, `val`, and `test`. For `lrs3`, the subset can be `train` and `test`.
 - `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
 - `groups`: Number of groups to split the dataset into.
@@ -144,6 +144,7 @@ This command will preprocess the dataset and store the preprocessed files in the
 python asr_infer.py \
     --root-dir [root-dir] \
     --dataset [dataset] \
+    --gpu_type [gpu_type] \
     --seg-duration [seg_duration] \
     --groups [n] \
     --job-index [j]
@@ -152,6 +153,7 @@ python asr_infer.py \
 ### Arguments
 - `root-dir`: Root directory of preprocessed dataset.
 - `dataset`: Name of dataset. Valid value is: `vox2`.
+- `gpu_type`: Type of GPU to use. Valid values are `cuda` or `mps`. Default: `cuda`.
 - `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
 - `groups`: Number of groups the dataset was split into during preprocessing.
 - `job-index`: Job index for the current group.
