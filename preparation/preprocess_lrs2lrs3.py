@@ -85,7 +85,7 @@ text_transform = TextTransform()
 # Load Data
 args.data_dir = os.path.normpath(args.data_dir)
 vid_dataloader = AVSRDataLoader(
-    modality="video", detector=args.detector, convert_gray=False
+    modality="visual", detector=args.detector, convert_gray=False
 )
 aud_dataloader = AVSRDataLoader(modality="audio")
 

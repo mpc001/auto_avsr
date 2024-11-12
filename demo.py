@@ -14,7 +14,7 @@ class InferencePipeline(torch.nn.Module):
         self.modality = cfg.data.modality
         if self.modality in ["audio", "audiovisual"]:
             self.audio_transform = AudioTransform(subset="test")
-        if self.modality in ["video", "audiovisual"]:
+        if self.modality in ["visual", "audiovisual"]:
             if detector == "mediapipe":
                 from preparation.detectors.mediapipe.detector import LandmarksDetector
                 from preparation.detectors.mediapipe.video_process import VideoProcess
@@ -27,7 +27,7 @@ class InferencePipeline(torch.nn.Module):
                 self.video_process = VideoProcess(convert_gray=False)
             self.video_transform = VideoTransform(subset="test")
 
-        if cfg.data.modality in ["audio", "video"]:
+        if cfg.data.modality in ["audio", "visual"]:
             from lightning import ModelModule
         elif cfg.data.modality == "audiovisual":
             from lightning_av import ModelModule
@@ -46,7 +46,7 @@ class InferencePipeline(torch.nn.Module):
             audio = audio.transpose(1, 0)
             audio = self.audio_transform(audio)
 
-        if self.modality in ["video", "audiovisual"]:
+        if self.modality in ["visual", "audiovisual"]:
             video = self.load_video(data_filename)
             landmarks = self.landmarks_detector(video)
             video = self.video_process(video, landmarks)
@@ -54,7 +54,7 @@ class InferencePipeline(torch.nn.Module):
             video = video.permute((0, 3, 1, 2))
             video = self.video_transform(video)
 
-        if self.modality == "video":
+        if self.modality == "visual":
             with torch.no_grad():
                 transcript = self.modelmodule(video)
         elif self.modality == "audio":

@@ -21,7 +21,7 @@ class ModelModule(LightningModule):
         self.cfg = cfg
         if self.cfg.data.modality == "audio":
             self.backbone_args = self.cfg.model.audio_backbone
-        elif self.cfg.data.modality == "video":
+        elif self.cfg.data.modality == "visual":
             self.backbone_args = self.cfg.model.visual_backbone
 
         self.text_transform = TextTransform()
