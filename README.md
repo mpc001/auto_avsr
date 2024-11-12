@@ -37,11 +37,13 @@ git clone https://github.com/pytorch/fairseq
 cd fairseq
 pip install --editable ./
 cd ..
+pip install -e fairseq
 ```
 
 4. Install PyTorch (tested pytorch version: v2.0.1) and other packages:
 
 ```Shell
+pip install pip==24.0
 pip install torch torchvision torchaudio
 pip install pytorch-lightning==1.5.10
 pip install sentencepiece
@@ -72,7 +74,7 @@ python train.py exp_dir=[exp_dir] \
 
 - `exp_dir`: Directory to save checkpoints and logs to.
 - `exp_name`: Experiment name. Location of checkpoints is `[exp_dir]`/`[exp_name]`.
-- `data.modality`: Type of input modality, valid values: `video` and `audio`.
+- `data.modality`: Type of input modality, valid values: `video` , `audio` and `audiovisual`.
 - `data.dataset.root_dir`: Root directory of preprocessed dataset, default: `null`.
 - `data.dataset.train_file`: Filename of training label list, default: `lrs3_train_transcript_lengths_seg24s.csv`.
 - `trainer.num_nodes`: Number of machines used, default: 1.

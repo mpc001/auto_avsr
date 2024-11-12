@@ -24,6 +24,12 @@ parser.add_argument(
     help="Name of dataset",
 )
 parser.add_argument(
+    "--gpu_type",
+    type=str,
+    default="cuda",
+    help="GPU type, either mps or cuda. (Default: cuda)",
+)
+parser.add_argument(
     "--seg-duration",
     type=int,
     default=24,
@@ -70,7 +76,9 @@ print(f"Directory {os.path.dirname(label_filename)} created")
 f = open(label_filename, "w")
 
 # Load ASR model
-model = whisper.load_model("medium.en", device="cuda")
+if args.gpu_type != "cuda" or "mps":
+    raise ValueError("Invalid GPU type. Valid values for gpu_type are \"cuda\" and \"mps\". ")
+model = whisper.load_model("medium.en", device=args.gpu_type)
 
 # Transcription
 for filename in tqdm(files_to_process):

@@ -21,6 +21,12 @@ Before feeding the raw stream into our model, each video sequence has to undergo
 
 ```Shell
 pip install -r requirements.txt
+git clone https://github.com/hhj1897/face_alignment.git
+pip install -e face_alignment
+git clone https://github.com/hhj1897/face_detection.git
+cd face_detection
+git lfs pull
+pip install -e .
 ```
 
 2. Install [retinaface](./tools) or [mediapipe](https://pypi.org/project/mediapipe/) tracker.
@@ -47,6 +53,7 @@ python preprocess_lrs2lrs3.py \
     --detector [detector] \
     --root-dir [root_dir] \
     --dataset [dataset] \
+    --gpu_type [gpu_type] \
     --subset [subset] \
     --seg-duration [seg_duration] \
     --groups [n] \
@@ -59,6 +66,7 @@ python preprocess_lrs2lrs3.py \
 - `detector`: Type of face detector. Valid values are: `mediapipe` and `retinaface`. Default: `retinaface`.
 - `root-dir`: Root directory of preprocessed dataset.
 - `dataset`: Name of dataset. Valid values are: `lrs2` and `lrs3`.
+- `gpu_type`: Type of GPU to use. Valid values are `cuda` and `mps`.
 - `subset`: Subset of dataset. For `lrs2`, the subset can be `train`, `val`, and `test`. For `lrs3`, the subset can be `train` and `test`.
 - `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
 - `groups`: Number of groups to split the dataset into.

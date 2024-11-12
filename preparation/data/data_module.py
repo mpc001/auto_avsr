@@ -10,14 +10,14 @@ import torchvision
 
 
 class AVSRDataLoader:
-    def __init__(self, modality, detector="retinaface", convert_gray=True):
+    def __init__(self, modality, detector="retinaface", convert_gray=True, gpu_type="cuda"):
         self.modality = modality
         if modality == "video":
             if detector == "retinaface":
                 from detectors.retinaface.detector import LandmarksDetector
                 from detectors.retinaface.video_process import VideoProcess
 
-                self.landmarks_detector = LandmarksDetector(device="cuda:0")
+                self.landmarks_detector = LandmarksDetector(device=gpu_type+":0")
                 self.video_process = VideoProcess(convert_gray=convert_gray)
 
             if detector == "mediapipe":
