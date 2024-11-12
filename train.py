@@ -6,6 +6,7 @@ import torch
 from pytorch_lightning import seed_everything, Trainer
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 from pytorch_lightning.plugins import DDPPlugin
+from lightning.pytorch.loggers import WandbLogger
 from avg_ckpts import ensemble
 from datamodule.data_module import DataModule
 
@@ -35,7 +36,7 @@ def main(cfg):
     datamodule = DataModule(cfg)
     trainer = Trainer(
         **cfg.trainer,
-        #logger=WandbLogger(name=cfg.exp_name, project="auto_avsr"),
+        logger=WandbLogger(name=cfg.exp_name, project="auto_avsr"),
         callbacks=callbacks,
         strategy=DDPPlugin(find_unused_parameters=False)
     )
