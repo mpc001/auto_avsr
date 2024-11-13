@@ -6,7 +6,7 @@ import torch
 from pytorch_lightning import seed_everything, Trainer
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 from pytorch_lightning.plugins import DDPPlugin
-from lightning.pytorch.loggers import WandbLogger
+from pytorch_lightning.loggers import WandbLogger
 from avg_ckpts import ensemble
 from datamodule.data_module import DataModule
 
