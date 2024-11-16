@@ -22,7 +22,7 @@ def main(cfg):
         dirpath=os.path.join(cfg.exp_dir, cfg.exp_name) if cfg.exp_dir else None,
         save_last=False,
         filename="{epoch}",
-        save_top_k=2,
+        save_top_k=1,
     )
     lr_monitor = LearningRateMonitor(logging_interval="step")
     callbacks = [checkpoint, lr_monitor]
