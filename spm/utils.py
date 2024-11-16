@@ -25,9 +25,17 @@ def remove_emojis(data):
     return re.sub(emoj, '', data)
 
 
+def remove_non_persian(text):
+    # Persian Unicode range: \u0600-\u06FF
+    # Also includes spaces, numbers, and some basic punctuation
+    persian_pattern = re.compile(r"[^\u0600-\u06FF\u200c\s0-9.,؛؟!?٪]")
+    return persian_pattern.sub("", text)
+
+
 def add_data_to_text_file(input_path, output_path, normalizer):
     with open(input_path, 'r') as f:
         text = f.read()
+        text = remove_non_persian(text)
         normalized_text = normalizer.normalize(text)
 
     with open(output_path, 'a') as f:
