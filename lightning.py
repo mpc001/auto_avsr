@@ -36,9 +36,10 @@ class ModelModule(LightningModule):
                 self.model.encoder.frontend.load_state_dict(tmp_ckpt)
             elif self.cfg.transfer_encoder:
                 tmp_ckpt = {k.replace("encoder.", ""): v for k, v in ckpt.items() if k.startswith("encoder.")}
-                self.model.encoder.load_state_dict(tmp_ckpt, strict=True)
+                # tmp_ckpt = {k.replace("encoders.", ""): v for k, v in tmp_ckpt.items() if k.startswith("encoders.")}
+                self.model.encoder.load_state_dict(tmp_ckpt, strict=False)
             else:
-                self.model.load_state_dict(ckpt)
+                self.model.load_state_dict(ckpt, strict=False)
 
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW([{"name": "model", "params": self.model.parameters(), "lr": self.cfg.optimizer.lr}], weight_decay=self.cfg.optimizer.weight_decay, betas=(0.9, 0.98))

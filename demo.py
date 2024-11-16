@@ -32,7 +32,7 @@ class InferencePipeline(torch.nn.Module):
         elif cfg.data.modality == "audiovisual":
             from lightning_av import ModelModule
         self.modelmodule = ModelModule(cfg)
-        self.modelmodule.model.load_state_dict(torch.load(cfg.pretrained_model_path, map_location=lambda storage, loc: storage))
+        self.modelmodule.model.load_state_dict(torch.load(cfg.pretrained_model_path, map_location=lambda storage, loc: storage), strict=False)
         self.modelmodule.eval()
 
 
