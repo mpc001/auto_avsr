@@ -39,7 +39,7 @@
     from preparation.utils import save_vid_aud_txt
 
     # Initialize video and audio data loaders
-    video_loader = AVSRDataLoader(modality="video", detector="retinaface", convert_gray=False)
+    video_loader = AVSRDataLoader(modality="visual", detector="retinaface", convert_gray=False)
     audio_loader = AVSRDataLoader(modality="audio")
 
     # Specify the file path to the data

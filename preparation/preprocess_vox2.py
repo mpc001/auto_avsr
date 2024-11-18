@@ -91,7 +91,7 @@ dst_vid_dir = os.path.join(
 
 # Load data
 vid_dataloader = AVSRDataLoader(
-    modality="video", detector=args.detector, convert_gray=False
+    modality="visual", detector=args.detector, convert_gray=False
 )
 aud_dataloader = AVSRDataLoader(modality="audio")
 

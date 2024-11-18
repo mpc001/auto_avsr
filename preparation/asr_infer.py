@@ -70,7 +70,7 @@ print(f"Directory {os.path.dirname(label_filename)} created")
 f = open(label_filename, "w")
 
 # Load ASR model
-model = whisper.load_model("medium.en", device="cuda")
+model = whisper.load_model("large-v3", device="cuda")
 
 # Transcription
 for filename in tqdm(files_to_process):
@@ -90,6 +90,7 @@ for filename in tqdm(files_to_process):
         continue
 
     # Write transcript to a text file
+    print(transcript)
     if transcript:
         with open(dst_filename, "w") as k:
             k.write(f"{transcript}")

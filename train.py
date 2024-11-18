@@ -6,6 +6,7 @@ import torch
 from pytorch_lightning import seed_everything, Trainer
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 from pytorch_lightning.plugins import DDPPlugin
+from pytorch_lightning.loggers import WandbLogger
 from avg_ckpts import ensemble
 from datamodule.data_module import DataModule
 
@@ -19,9 +20,9 @@ def main(cfg):
         monitor="monitoring_step",
         mode="max",
         dirpath=os.path.join(cfg.exp_dir, cfg.exp_name) if cfg.exp_dir else None,
-        save_last=True,
+        save_last=False,
         filename="{epoch}",
-        save_top_k=10,
+        save_top_k=1,
     )
     lr_monitor = LearningRateMonitor(logging_interval="step")
     callbacks = [checkpoint, lr_monitor]
@@ -35,7 +36,7 @@ def main(cfg):
     datamodule = DataModule(cfg)
     trainer = Trainer(
         **cfg.trainer,
-        #logger=WandbLogger(name=cfg.exp_name, project="auto_avsr"),
+        logger=WandbLogger(name=cfg.exp_name, project="auto_avsr"),
         callbacks=callbacks,
         strategy=DDPPlugin(find_unused_parameters=False)
     )
