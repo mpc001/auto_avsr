@@ -68,7 +68,7 @@ python preprocess_lrs2lrs3.py \
 - `dataset`: Name of dataset. Valid values are: `lrs2` and `lrs3`.
 - `gpu_type`: Type of GPU to use. Valid values are `cuda` and `mps`. Default: `cuda`.
 - `subset`: Subset of dataset. For `lrs2`, the subset can be `train`, `val`, and `test`. For `lrs3`, the subset can be `train` and `test`.
-- `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
+- `seg-duration`: Length of the maximal segment in seconds. Default: `16`.
 - `groups`: Number of groups to split the dataset into.
 - `job-index`: Job index for the current group. Valid values are an integer within the range of `[0, n)`.
 
@@ -87,7 +87,7 @@ python merge.py \
 - `root-dir`: Root directory of preprocessed dataset.
 - `dataset`: Name of dataset. Valid values are: `lrs2` and `lrs3`.
 - `subset`: Subset of the dataset. For LRS2, valid values are `train`, `val`, and `test`. For LRS3, valid values are `train` and `test`.
-- `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
+- `seg-duration`: Length of the maximal segment in seconds. Default: `16`.
 - `groups`: Number of groups to split the dataset into.
 
 ## Pre-processing VoxCeleb2
@@ -130,7 +130,7 @@ python preprocess_vox2.py \
 - `detector`: Type of face detector. Valid values are: `mediapipe` and `retinaface`. Default: `retinaface`.
 - `root-dir`: Path to the root directory where all preprocessed files will be stored.
 - `dataset`: Name of dataset. Default: `vox2`.
-- `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
+- `seg-duration`: Length of the maximal segment in seconds. Default: `16`.
 - `groups`: Number of groups to split the dataset into.
 - `job-index`: Job index for the current group and should be an integer within the range of `[0, n)`.
 
@@ -154,7 +154,7 @@ python asr_infer.py \
 - `root-dir`: Root directory of preprocessed dataset.
 - `dataset`: Name of dataset. Valid value is: `vox2`.
 - `gpu_type`: Type of GPU to use. Valid values are `cuda` or `mps`. Default: `cuda`.
-- `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
+- `seg-duration`: Length of the maximal segment in seconds. Default: `16`.
 - `groups`: Number of groups the dataset was split into during preprocessing.
 - `job-index`: Job index for the current group.
 
@@ -173,5 +173,5 @@ python merge.py \
 - `root-dir`: Root directory of preprocessed dataset.
 - `dataset`: Name of the dataset. Valid value is: `vox2`
 - `subset`: The subset name of the dataset. For `vox2`, valid value is `train`.
-- `seg-duration`: Length of the maximal segment in seconds. Default: `24`.
+- `seg-duration`: Length of the maximal segment in seconds. Default: `16`.
 - `groups`: Number of groups to split the dataset into.

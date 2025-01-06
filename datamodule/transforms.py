@@ -149,7 +149,7 @@ class TextTransform:
         self.spm = sentencepiece.SentencePieceProcessor(model_file=sp_model_path)
 
         # Load units and create dictionary
-        units = open(dict_path, encoding='utf8').read().splitlines()
+        units = open(dict_path, encoding="utf8").read().splitlines()
         self.hashmap = {unit.split()[0]: unit.split()[-1] for unit in units}
         # 0 will be used for "blank" in CTC
         self.token_list = ["<blank>"] + list(self.hashmap.keys()) + ["<eos>"]

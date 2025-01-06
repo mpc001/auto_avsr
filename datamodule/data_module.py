@@ -4,15 +4,9 @@ import torch
 from pytorch_lightning import LightningDataModule
 
 from .av_dataset import AVDataset
-from .samplers import (
-    ByFrameCountSampler,
-    DistributedSamplerWrapper,
-    RandomSamplerWrapper,
-)
 from .transforms import AudioTransform, VideoTransform
 
 
-# https://github.com/facebookresearch/av_hubert/blob/593d0ae8462be128faab6d866a3a926e2955bde1/avhubert/hubert_dataset.py#L517
 def pad(samples, pad_val=0.0):
     lengths = [len(s) for s in samples]
     max_size = max(lengths)
@@ -47,67 +41,140 @@ def collate_pad(batch):
     return batch_out
 
 
-class DataModule(LightningDataModule):
-    def __init__(self, cfg=None):
-        super().__init__()
-        self.cfg = cfg
-        self.cfg.gpus = torch.cuda.device_count()
-        self.total_gpus = self.cfg.gpus * self.cfg.trainer.num_nodes
+def _batch_by_token_count(idx_target_lengths, max_frames, batch_size=None):
+    batches = []
+    current_batch = []
+    current_token_count = 0
+    for idx, target_length in idx_target_lengths:
+        if current_token_count + target_length > max_frames or (
+            batch_size and len(current_batch) == batch_size
+        ):
+            batches.append(current_batch)
+            current_batch = [idx]
+            current_token_count = target_length
+        else:
+            current_batch.append(idx)
+            current_token_count += target_length
 
-    def _dataloader(self, ds, sampler, collate_fn):
-        return torch.utils.data.DataLoader(
-            ds,
-            num_workers=12,
-            pin_memory=True,
-            batch_sampler=sampler,
-            collate_fn=collate_fn,
+    if current_batch:
+        batches.append(current_batch)
+
+    return batches
+
+
+class CustomBucketDataset(torch.utils.data.Dataset):
+    def __init__(
+        self, dataset, lengths, max_frames, num_buckets, shuffle=False, batch_size=None
+    ):
+        super().__init__()
+
+        assert len(dataset) == len(lengths)
+
+        self.dataset = dataset
+
+        max_length = max(lengths)
+        min_length = min(lengths)
+
+        assert max_frames >= max_length
+
+        buckets = torch.linspace(min_length, max_length, num_buckets)
+        lengths = torch.tensor(lengths)
+        bucket_assignments = torch.bucketize(lengths, buckets)
+
+        idx_length_buckets = [
+            (idx, length, bucket_assignments[idx]) for idx, length in enumerate(lengths)
+        ]
+        if shuffle:
+            idx_length_buckets = random.sample(
+                idx_length_buckets, len(idx_length_buckets)
+            )
+        else:
+            idx_length_buckets = sorted(
+                idx_length_buckets, key=lambda x: x[1], reverse=True
+            )
+        sorted_idx_length_buckets = sorted(idx_length_buckets, key=lambda x: x[2])
+        self.batches = _batch_by_token_count(
+            [(idx, length) for idx, length, _ in sorted_idx_length_buckets],
+            max_frames,
+            batch_size=batch_size,
         )
 
+    def __getitem__(self, idx):
+        return [self.dataset[subidx] for subidx in self.batches[idx]]
+
+    def __len__(self):
+        return len(self.batches)
+
+
+class DataModule(LightningDataModule):
+    def __init__(
+        self,
+        args=None,
+        batch_size=None,
+        train_num_buckets=50,
+        train_shuffle=True,
+        num_workers=10,
+    ):
+        super().__init__()
+        self.args = args
+        self.batch_size = batch_size
+        self.train_num_buckets = train_num_buckets
+        self.train_shuffle = train_shuffle
+        self.num_workers = num_workers
+
     def train_dataloader(self):
-        ds_args = self.cfg.data.dataset
-        train_ds = AVDataset(
-            root_dir=ds_args.root_dir,
-            label_path=os.path.join(
-                ds_args.root_dir, ds_args.label_dir, ds_args.train_file
-            ),
+        dataset = AVDataset(
+            root_dir=self.args.root_dir,
+            label_path=os.path.join(self.args.root_dir, "labels", self.args.train_file),
             subset="train",
-            modality=self.cfg.data.modality,
+            modality=self.args.modality,
             audio_transform=AudioTransform("train"),
             video_transform=VideoTransform("train"),
         )
-        sampler = ByFrameCountSampler(train_ds, self.cfg.data.max_frames)
-        if self.total_gpus > 1:
-            sampler = DistributedSamplerWrapper(sampler)
-        else:
-            sampler = RandomSamplerWrapper(sampler)
-        return self._dataloader(train_ds, sampler, collate_pad)
+        dataset = CustomBucketDataset(
+            dataset,
+            dataset.input_lengths,
+            self.args.max_frames,
+            self.train_num_buckets,
+            batch_size=self.batch_size,
+        )
+        dataloader = torch.utils.data.DataLoader(
+            dataset,
+            num_workers=self.num_workers,
+            batch_size=None,
+            shuffle=self.train_shuffle,
+            collate_fn=collate_pad,
+        )
+        return dataloader
 
     def val_dataloader(self):
-        ds_args = self.cfg.data.dataset
-        val_ds = AVDataset(
-            root_dir=ds_args.root_dir,
-            label_path=os.path.join(ds_args.root_dir, ds_args.label_dir, ds_args.val_file),
+        dataset = AVDataset(
+            root_dir=self.args.root_dir,
+            label_path=os.path.join(self.args.root_dir, "labels", self.args.val_file),
             subset="val",
-            modality=self.cfg.data.modality,
+            modality=self.args.modality,
             audio_transform=AudioTransform("val"),
             video_transform=VideoTransform("val"),
         )
-        sampler = ByFrameCountSampler(
-            val_ds, self.cfg.data.max_frames_val, shuffle=False
+        dataset = CustomBucketDataset(
+            dataset, dataset.input_lengths, 1000, 1, batch_size=self.batch_size
         )
-        if self.total_gpus > 1:
-            sampler = DistributedSamplerWrapper(sampler, shuffle=False, drop_last=True)
-        return self._dataloader(val_ds, sampler, collate_pad)
+        dataloader = torch.utils.data.DataLoader(
+            dataset,
+            batch_size=None,
+            num_workers=self.num_workers,
+            collate_fn=collate_pad,
+        )
+        return dataloader
 
     def test_dataloader(self):
-        ds_args = self.cfg.data.dataset
         dataset = AVDataset(
-            root_dir=ds_args.root_dir,
-            label_path=os.path.join(ds_args.root_dir, ds_args.label_dir, ds_args.test_file),
+            root_dir=self.args.root_dir,
+            label_path=os.path.join(self.args.root_dir, "labels", self.args.test_file),
             subset="test",
-            modality=self.cfg.data.modality,
+            modality=self.args.modality,
             audio_transform=AudioTransform(
-                "test", snr_target=self.cfg.decode.snr_target
+                "test", snr_target=self.args.decode_snr_target
             ),
             video_transform=VideoTransform("test"),
         )
