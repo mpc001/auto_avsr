@@ -29,8 +29,8 @@ parser.add_argument(
 parser.add_argument(
     "--seg-duration",
     type=int,
-    default=24,
-    help="Max duration (second) for each segment, (Default: 24)",
+    default=16,
+    help="Max duration (second) for each segment, (Default: 16)",
 )
 args = parser.parse_args()
 

@@ -1,0 +1,6 @@
+modality: video
+root_dir: /mnt/ssd/pingchuan/autoavsr/
+test_file: lrs3_test_transcript_lengths_seg16s.csv
+pretrained_model_path: /home/huygens/Downloads/vsr_trlrs3_base.pth
+decode_snr_target: 999999
+debug: false

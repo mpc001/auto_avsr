@@ -6,9 +6,7 @@ import torch
 def average_checkpoints(last):
     avg = None
     for path in last:
-        states = torch.load(path, map_location=lambda storage, loc: storage)[
-            "state_dict"
-        ]
+        states = torch.load(path, map_location=lambda storage, loc: storage)["state_dict"]
         states = {k[6:]: v for k, v in states.items() if k.startswith("model.")}
         if avg is None:
             avg = states
@@ -29,12 +27,10 @@ def ensemble(args):
     last = [
         os.path.join(args.exp_dir, args.exp_name, f"epoch={n}.ckpt")
         for n in range(
-            args.trainer.max_epochs - 10,
-            args.trainer.max_epochs,
+            args.max_epochs - 10,
+            args.max_epochs,
         )
     ]
-    model_path = os.path.join(
-        args.exp_dir, args.exp_name, f"model_avg_10.pth"
-    )
+    model_path = os.path.join(args.exp_dir, args.exp_name, f"model_avg_10.pth")
     torch.save(average_checkpoints(last), model_path)
     return model_path

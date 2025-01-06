@@ -117,39 +117,6 @@ class ScaledPositionalEncoding(PositionalEncoding):
         return self.dropout(x)
 
 
-class LegacyRelPositionalEncoding(PositionalEncoding):
-    """Relative positional encoding module (old version).
-    Details can be found in https://github.com/espnet/espnet/pull/2816.
-    See : Appendix B in https://arxiv.org/abs/1901.02860
-    Args:
-        d_model (int): Embedding dimension.
-        dropout_rate (float): Dropout rate.
-        max_len (int): Maximum input length.
-    """
-
-    def __init__(self, d_model, dropout_rate, max_len=5000):
-        """Initialize class."""
-        super().__init__(
-            d_model=d_model,
-            dropout_rate=dropout_rate,
-            max_len=max_len,
-            reverse=True,
-        )
-
-    def forward(self, x):
-        """Compute positional encoding.
-        Args:
-            x (torch.Tensor): Input tensor (batch, time, `*`).
-        Returns:
-            torch.Tensor: Encoded tensor (batch, time, `*`).
-            torch.Tensor: Positional embedding tensor (1, time, `*`).
-        """
-        self.extend_pe(x)
-        x = x * self.xscale
-        pos_emb = self.pe[:, : x.size(1)]
-        return self.dropout(x), self.dropout(pos_emb)
-
-
 class RelPositionalEncoding(torch.nn.Module):
     """Relative positional encoding module (new implementation).
     Details can be found in https://github.com/espnet/espnet/pull/2816.

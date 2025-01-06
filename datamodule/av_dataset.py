@@ -1,22 +1,13 @@
-import os
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 
+# Copyright 2023 Imperial College London (Pingchuan Ma)
+# Apache 2.0  (http://www.apache.org/licenses/LICENSE-2.0)
+
+import os
 import torch
 import torchaudio
 import torchvision
-
-
-def cut_or_pad(data, size, dim=0):
-    """
-    Pads or trims the data along a dimension.
-    """
-    if data.size(dim) < size:
-        padding = size - data.size(dim)
-        data = torch.nn.functional.pad(data, (0, 0, 0, padding), "constant")
-        size = data.size(dim)
-    elif data.size(dim) > size:
-        data = data[:size]
-    assert data.size(dim) == size
-    return data
 
 
 def load_video(path):
@@ -54,6 +45,7 @@ class AVDataset(torch.utils.data.Dataset):
         self.rate_ratio = rate_ratio
 
         self.list = self.load_list(label_path)
+        self.input_lengths = [int(_[2]) for _ in self.list]
 
         self.audio_transform = audio_transform
         self.video_transform = video_transform
@@ -62,14 +54,7 @@ class AVDataset(torch.utils.data.Dataset):
         paths_counts_labels = []
         for path_count_label in open(label_path).read().splitlines():
             dataset_name, rel_path, input_length, token_id = path_count_label.split(",")
-            paths_counts_labels.append(
-                (
-                    dataset_name,
-                    rel_path,
-                    int(input_length),
-                    torch.tensor([int(_) for _ in token_id.split()]),
-                )
-            )
+            paths_counts_labels.append((dataset_name, rel_path, int(input_length), torch.tensor([int(_) for _ in token_id.split()])))
         return paths_counts_labels
 
     def __getitem__(self, idx):
@@ -83,13 +68,6 @@ class AVDataset(torch.utils.data.Dataset):
             audio = load_audio(path)
             audio = self.audio_transform(audio)
             return {"input": audio, "target": token_id}
-        elif self.modality == "audiovisual":
-            video = load_video(path)
-            audio = load_audio(path)
-            audio = cut_or_pad(audio, len(video) * self.rate_ratio)
-            video = self.video_transform(video)
-            audio = self.audio_transform(audio)
-            return {"video": video, "audio": audio, "target": token_id}
 
     def __len__(self):
         return len(self.list)
