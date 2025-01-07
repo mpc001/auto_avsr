@@ -21,12 +21,6 @@ Before feeding the raw stream into our model, each video sequence has to undergo
 
 ```Shell
 pip install -r requirements.txt
-git clone https://github.com/hhj1897/face_alignment.git
-pip install -e face_alignment
-git clone https://github.com/hhj1897/face_detection.git
-cd face_detection
-git lfs pull
-pip install -e .
 ```
 
 2. Install [retinaface](./tools) or [mediapipe](https://pypi.org/project/mediapipe/) tracker.
