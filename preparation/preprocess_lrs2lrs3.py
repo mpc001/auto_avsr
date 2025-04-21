@@ -83,6 +83,33 @@ parser.add_argument(
     default=0,
     help="Index to identify separate jobs (useful for parallel processing).",
 )
+# args = parser.parse_args()
+
+# seg_duration = args.seg_duration
+# dataset = args.dataset
+# text_transform = TextTransform()
+
+# # Load Data
+# args.data_dir = os.path.normpath(args.data_dir)
+# if args.gpu_type != "cuda" or "mps":
+#     raise ValueError("Invalid GPU type. Valid values for gpu_type are \"cuda\" and \"mps\". ")
+# vid_dataloader = AVSRDataLoader(
+#     modality="video", detector=args.detector, convert_gray=False, gpu_type=args.gpu_type
+# )
+# aud_dataloader = AVSRDataLoader(modality="audio")
+
+# seg_vid_len = seg_duration * 25
+# seg_aud_len = seg_duration * 16000
+
+# # Label filename
+# label_filename = os.path.join(
+#     args.root_dir,
+#     "labels",
+#     f"{dataset}_{args.subset}_transcript_lengths_seg{seg_duration}s.csv"
+#     if args.groups <= 1
+#     else f"{dataset}_{args.subset}_transcript_lengths_seg{seg_duration}s.{args.groups}.{args.job_index}.csv",
+# )
+#my code----------------------------------------------------
 args = parser.parse_args()
 
 seg_duration = args.seg_duration
@@ -91,10 +118,14 @@ text_transform = TextTransform()
 
 # Load Data
 args.data_dir = os.path.normpath(args.data_dir)
-if args.gpu_type != "cuda" or "mps":
-    raise ValueError("Invalid GPU type. Valid values for gpu_type are \"cuda\" and \"mps\". ")
+
+# GPU type validation (sanitized)
+gpu_type = args.gpu_type.strip().lower()
+if gpu_type not in ["cuda", "mps"]:
+    raise ValueError('Invalid GPU type. Valid values for gpu_type are "cuda" and "mps".')
+
 vid_dataloader = AVSRDataLoader(
-    modality="video", detector=args.detector, convert_gray=False, gpu_type=args.gpu_type
+    modality="video", detector=args.detector, convert_gray=False, gpu_type=gpu_type
 )
 aud_dataloader = AVSRDataLoader(modality="audio")
 
@@ -109,6 +140,8 @@ label_filename = os.path.join(
     if args.groups <= 1
     else f"{dataset}_{args.subset}_transcript_lengths_seg{seg_duration}s.{args.groups}.{args.job_index}.csv",
 )
+#--------------------------------------
+
 os.makedirs(os.path.dirname(label_filename), exist_ok=True)
 print(f"Directory {os.path.dirname(label_filename)} created")
 
@@ -137,36 +170,108 @@ if dataset == "lrs3":
         filenames.sort()
     else:
         raise NotImplementedError
+# elif dataset == "lrs2":
+#     if args.subset in ["val", "test"]:
+#         filenames = [
+#             os.path.join(args.data_dir, "main", _.split()[0] + ".mp4")
+#             for _ in open(
+#                 os.path.join(os.path.dirname(args.data_dir), args.subset) + ".txt"
+#             )
+#             .read()
+#             .splitlines()
+#         ]
+#     elif args.subset == "train":
+#         filenames = [
+#             os.path.join(args.data_dir, "main", _.split()[0] + ".mp4")
+#             for _ in open(
+#                 os.path.join(os.path.dirname(args.data_dir), args.subset) + ".txt"
+#             )
+#             .read()
+#             .splitlines()
+#         ]
+#         pretrain_filenames = [
+#             os.path.join(args.data_dir, "pretrain", _.split()[0] + ".mp4")
+#             for _ in open(os.path.join(os.path.dirname(args.data_dir), "pretrain.txt"))
+#             .read()
+#             .splitlines()
+#         ]
+#         filenames.extend(pretrain_filenames)
+#         filenames.sort()
+#     else:
+#         raise NotImplementedError
+#my condition -----------------------------------------
 elif dataset == "lrs2":
     if args.subset in ["val", "test"]:
-        filenames = [
-            os.path.join(args.data_dir, "main", _.split()[0] + ".mp4")
-            for _ in open(
-                os.path.join(os.path.dirname(args.data_dir), args.subset) + ".txt"
-            )
-            .read()
-            .splitlines()
-        ]
+        # Build the path to the subset text file
+        subset_file = os.path.join(os.path.dirname(args.data_dir), f"{args.subset}.txt")
+        
+        filenames = []
+        try:
+            with open(subset_file, 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:  # Skip empty lines
+                        continue
+                    parts = line.split()
+                    if parts:  # Only proceed if we have content
+                        video_id = parts[0]
+                        mp4_path = os.path.join(args.data_dir, "main", f"{video_id}.mp4")
+                        if os.path.exists(mp4_path):
+                            filenames.append(mp4_path)
+                        else:
+                            print(f"Warning: Video file not found - {mp4_path}")
+        except FileNotFoundError:
+            print(f"Error: Could not find subset file at {subset_file}")
+            exit(1)
+
     elif args.subset == "train":
-        filenames = [
-            os.path.join(args.data_dir, "main", _.split()[0] + ".mp4")
-            for _ in open(
-                os.path.join(os.path.dirname(args.data_dir), args.subset) + ".txt"
-            )
-            .read()
-            .splitlines()
-        ]
-        pretrain_filenames = [
-            os.path.join(args.data_dir, "pretrain", _.split()[0] + ".mp4")
-            for _ in open(os.path.join(os.path.dirname(args.data_dir), "pretrain.txt"))
-            .read()
-            .splitlines()
-        ]
+        # Process main training files
+        train_file = os.path.join(os.path.dirname(args.data_dir), "train.txt")
+        filenames = []
+        
+        try:
+            with open(train_file, 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    if parts:
+                        video_id = parts[0]
+                        mp4_path = os.path.join(args.data_dir, "main", f"{video_id}.mp4")
+                        if os.path.exists(mp4_path):
+                            filenames.append(mp4_path)
+                        else:
+                            print(f"Warning: Training video not found - {mp4_path}")
+        except FileNotFoundError:
+            print(f"Error: Could not find training file at {train_file}")
+            exit(1)
+
+        # Process pretrain files
+        pretrain_file = os.path.join(os.path.dirname(args.data_dir), "pretrain.txt")
+        pretrain_filenames = []
+        
+        try:
+            with open(pretrain_file, 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split()
+                    if parts:
+                        video_id = parts[0]
+                        mp4_path = os.path.join(args.data_dir, "pretrain", f"{video_id}.mp4")
+                        if os.path.exists(mp4_path):
+                            pretrain_filenames.append(mp4_path)
+                        else:
+                            print(f"Warning: Pretrain video not found - {mp4_path}")
+        except FileNotFoundError:
+            print(f"Error: Could not find pretrain file at {pretrain_file}")
+            exit(1)
+
         filenames.extend(pretrain_filenames)
         filenames.sort()
-    else:
-        raise NotImplementedError
-
+#--------------------------------------------
 unit = math.ceil(len(filenames) * 1.0 / args.groups)
 filenames = filenames[args.job_index * unit : (args.job_index + 1) * unit]
 
